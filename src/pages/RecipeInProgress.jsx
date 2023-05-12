@@ -20,6 +20,7 @@ function RecipeInProgress() {
   const LAST_LETTER = -1;
   const recipeID = history.location.pathname.split('/')[2];
   const recipeType = history.location.pathname.split('/')[1];
+
   useEffect(() => {
     const handleFetchDetails = async () => {
       let recipeDetail;
@@ -41,29 +42,27 @@ function RecipeInProgress() {
     };
     handleFetchDetails();
   }, [recipeID, recipeType]);
+
   useEffect(() => {
-    if (getLocalStorage('inProgressRecipes') !== null) {
-      const recipesInProgress = getLocalStorage('inProgressRecipes') || {};
-      if (recipesInProgress[recipeType] && recipesInProgress[recipeType][recipeID]) {
-        setCheckboxValues(recipesInProgress);
-      }
+    const recipesInProgress = getLocalStorage('inProgressRecipes') || {};
+    const favoriteRecipes = getLocalStorage('favoriteRecipes') || [];
+
+    if (recipesInProgress[recipeType]?.[recipeID]) {
+      setCheckboxValues(recipesInProgress);
     }
-    if (getLocalStorage('favoriteRecipes') !== null) {
-      const favoriteRecipes = getLocalStorage('favoriteRecipes');
-      const recipeExists = favoriteRecipes
-        .filter((recipe) => recipe.id === recipeID);
-      if (recipeExists.length > 0) {
-        setFavoriteIcon(true);
-      }
+
+    if (favoriteRecipes.some((recipe) => recipe.id === recipeID)) {
+      setFavoriteIcon(true);
     }
   }, [recipeType, recipeID]);
+
   const handleShareButton = () => {
-    const URL = window.location.href;
-    const modifiedURL = URL.replace('/in-progress', '');
+    const modifiedURL = window.location.href.replace('/in-progress', '');
     copy(modifiedURL);
     setIsLinkCopied(true);
     setTimeout(() => setIsLinkCopied(false), LINK_COPIED_MESSAGE_TIME);
   };
+
   const handleFavoriteButton = () => {
     const favoriteObj = {
       id: recipeDetails[0].idMeal || recipeDetails[0].idDrink,
@@ -74,23 +73,21 @@ function RecipeInProgress() {
       name: recipeDetails[0].strMeal || recipeDetails[0].strDrink,
       image: recipeDetails[0].strMealThumb || recipeDetails[0].strDrinkThumb,
     };
-    let newFavoriteRecipes;
-    if (getLocalStorage('favoriteRecipes') !== null) {
-      const favoriteRecipes = getLocalStorage('favoriteRecipes');
-      if (favoriteRecipes.some((recipe) => recipe.id === favoriteObj.id)) {
-        const favoriteRecipesFiltered = favoriteRecipes
-          .filter((recipe) => recipe.id !== favoriteObj.id);
-        setLocalStorage('favoriteRecipes', favoriteRecipesFiltered);
-      } else {
-        newFavoriteRecipes = [...favoriteRecipes, favoriteObj];
-        setLocalStorage('favoriteRecipes', newFavoriteRecipes);
-      }
+
+    const favoriteRecipes = getLocalStorage('favoriteRecipes') || [];
+    const recipeExists = favoriteRecipes.some((recipe) => recipe.id === favoriteObj.id);
+
+    if (recipeExists) {
+      const favoriteRecipesFiltered = favoriteRecipes
+        .filter((recipe) => recipe.id !== favoriteObj.id);
+      setLocalStorage('favoriteRecipes', favoriteRecipesFiltered);
     } else {
-      newFavoriteRecipes = [favoriteObj];
+      const newFavoriteRecipes = [...favoriteRecipes, favoriteObj];
       setLocalStorage('favoriteRecipes', newFavoriteRecipes);
     }
     setFavoriteIcon(!favoriteIcon);
   };
+
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
     setCheckboxValues((prevState) => ({
@@ -103,6 +100,7 @@ function RecipeInProgress() {
         },
       },
     }));
+
     const inProgressRecipes = getLocalStorage('inProgressRecipes') || {};
     setLocalStorage('inProgressRecipes', {
       ...inProgressRecipes,
@@ -115,14 +113,15 @@ function RecipeInProgress() {
       },
     });
   };
+
   useEffect(() => {
-    const checkboxes = Object.values(checkboxValues[recipeType]?.[recipeID] || {});
-    const checkboxesChecked = checkboxes.filter((checked) => checked);
-    if (ingredientDetails.length === checkboxesChecked.length) {
-      setIsFinishBtnEnabled(true);
-    } else { setIsFinishBtnEnabled(false); }
+    const checkboxes = Object.values(checkboxValues?.[recipeType]?.[recipeID] || {});
+    const checkboxesChecked = checkboxes.filter(Boolean);
+    setIsFinishBtnEnabled(ingredientDetails.length === checkboxesChecked.length);
   }, [checkboxValues, ingredientDetails, recipeID, recipeType]);
+
   const getCurrentDateTime = () => { const now = new Date(); return now.toISOString(); };
+
   const handleFinishButton = () => {
     const doneObj = {
       id: recipeDetails[0].idMeal || recipeDetails[0].idDrink,
@@ -136,22 +135,20 @@ function RecipeInProgress() {
       type: recipeType.slice(0, LAST_LETTER),
       doneDate: getCurrentDateTime(),
     };
-    let newDoneRecipes;
-    if (getLocalStorage('doneRecipes') !== null) {
-      const doneRecipes = getLocalStorage('doneRecipes');
-      if (doneRecipes.some((recipe) => recipe.id === doneObj.id)) {
-        const doneRecipesFiltered = doneRecipes
-          .filter((recipe) => recipe.id !== doneObj.id);
-        setLocalStorage('doneRecipes', doneRecipesFiltered);
-      } else {
-        newDoneRecipes = [...doneRecipes, doneObj];
-        setLocalStorage('doneRecipes', newDoneRecipes);
-      }
+
+    const doneRecipes = getLocalStorage('doneRecipes') || [];
+    const recipeExists = doneRecipes.some((recipe) => recipe.id === doneObj.id);
+
+    if (recipeExists) {
+      const doneRecipesFiltered = doneRecipes
+        .filter((recipe) => recipe.id !== doneObj.id);
+      setLocalStorage('doneRecipes', doneRecipesFiltered);
     } else {
-      newDoneRecipes = [doneObj];
+      const newDoneRecipes = [...doneRecipes, doneObj];
       setLocalStorage('doneRecipes', newDoneRecipes);
     }
   };
+
   return (
     <div>
       <p>{`Hello World! Your recipe type is: ${recipeType}`}</p>
@@ -164,9 +161,7 @@ function RecipeInProgress() {
         onClick={ handleFavoriteButton }
         src={ favoriteIcon ? blackHeartIcon : whiteHeartIcon }
       >
-        {favoriteIcon
-          ? <img src={ blackHeartIcon } alt="favorite icon" />
-          : <img src={ whiteHeartIcon } alt="favorite icon" />}
+        <img src={ favoriteIcon ? blackHeartIcon : whiteHeartIcon } alt="favorite icon" />
       </button>
       {isLinkCopied && <p>Link copied!</p>}
       {recipeDetails.map((recipe, index) => (

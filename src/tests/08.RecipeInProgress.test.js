@@ -94,7 +94,10 @@ describe('Testa a tela de detalhes de uma receita', () => {
     userEvent.click(secondIngredient);
     userEvent.click(thirdIngredient);
 
-    userEvent.click(finishBtn);
     expect(finishBtn).toBeEnabled();
+    userEvent.click(finishBtn);
+
+    expect(history.location.pathname).toBe('/done-recipes');
+    expect(screen.getByTestId('0-horizontal-image')).toBeInTheDocument();
   });
 });
