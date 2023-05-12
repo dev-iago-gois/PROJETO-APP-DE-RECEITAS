@@ -22,37 +22,26 @@ function RecipeInProgress() {
   const recipeType = history.location.pathname.split('/')[1];
   useEffect(() => {
     const handleFetchDetails = async () => {
-      try {
-        let recipeDetail;
-        let recipeIngredient;
-        if (recipeType === 'meals') {
-          recipeDetail = await fetchFoodByIdAPI(recipeID);
-          recipeIngredient = Object
-            .entries(recipeDetail[0])
-            .filter(([key, value]) => key.startsWith('strIngredient') && value);
-        }
-        if (recipeType === 'drinks') {
-          recipeDetail = await fetchDrinkByIdAPI(recipeID);
-          recipeIngredient = Object
-            .entries(recipeDetail[0])
-            .filter(([key, value]) => key.startsWith('strIngredient') && value);
-        }
-        setRecipeDetails(recipeDetail);
-        setIngredientDetails(recipeIngredient);
-      } catch (error) {
-        console.log(error);
+      let recipeDetail;
+      let recipeIngredient;
+      if (recipeType === 'meals') {
+        recipeDetail = await fetchFoodByIdAPI(recipeID);
+        recipeIngredient = Object
+          .entries(recipeDetail[0])
+          .filter(([key, value]) => key.startsWith('strIngredient') && value);
       }
+      if (recipeType === 'drinks') {
+        recipeDetail = await fetchDrinkByIdAPI(recipeID);
+        recipeIngredient = Object
+          .entries(recipeDetail[0])
+          .filter(([key, value]) => key.startsWith('strIngredient') && value);
+      }
+      setRecipeDetails(recipeDetail);
+      setIngredientDetails(recipeIngredient);
     };
     handleFetchDetails();
   }, [recipeID, recipeType]);
   useEffect(() => {
-    if (getLocalStorage('doneRecipes') !== null) {
-      const recipesDone = getLocalStorage('doneRecipes');
-      const recipeExists = recipesDone.filter((recipe) => recipe.id === Number(recipeID));
-      if (recipeExists.length > 0) {
-        setRenderButton(false);
-      }
-    }
     if (getLocalStorage('inProgressRecipes') !== null) {
       const recipesInProgress = getLocalStorage('inProgressRecipes') || {};
       if (recipesInProgress[recipeType] && recipesInProgress[recipeType][recipeID]) {
@@ -114,21 +103,17 @@ function RecipeInProgress() {
         },
       },
     }));
-    try {
-      const inProgressRecipes = getLocalStorage('inProgressRecipes') || {};
-      setLocalStorage('inProgressRecipes', {
-        ...inProgressRecipes,
-        [recipeType]: {
-          ...(inProgressRecipes[recipeType] || {}),
-          [recipeID]: {
-            ...(inProgressRecipes[recipeType]?.[recipeID] || {}),
-            [name]: checked,
-          },
+    const inProgressRecipes = getLocalStorage('inProgressRecipes') || {};
+    setLocalStorage('inProgressRecipes', {
+      ...inProgressRecipes,
+      [recipeType]: {
+        ...(inProgressRecipes[recipeType] || {}),
+        [recipeID]: {
+          ...(inProgressRecipes[recipeType]?.[recipeID] || {}),
+          [name]: checked,
         },
-      });
-    } catch (error) {
-      console.log(error);
-    }
+      },
+    });
   };
   useEffect(() => {
     const checkboxes = Object.values(checkboxValues[recipeType]?.[recipeID] || {});
