@@ -1,7 +1,7 @@
 # :construction: Todos os commits "Initial commit" foram feitos pela @Trybe :construction:
 
-🛑 Este projeto foi desenvolvido em grupo na conclusao do modulo de frontend. <br>
-Devs:
+##🛑 Este projeto foi desenvolvido em grupo na conclusao do modulo de frontend. <br>
+Devs:<br>
 [Gabriel Scapim](https://github.com/gabrielscapim)<br>
 [Gabrieli Santos](https://github.com/gabrielisantos-dev)<br>
 [Iago Gois](https://github.com/dev-iago-gois)<br>
