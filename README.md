@@ -1,5 +1,14 @@
 # :construction: Todos os commits "Initial commit" foram feitos pela @Trybe :construction:
 
+🛑 Este projeto foi desenvolvido em grupo na conclusao do modulo de frontend. <br>
+Devs:
+[Gabriel Scapim](https://github.com/gabrielscapim)<br>
+[Gabrieli Santos](https://github.com/gabrielisantos-dev)<br>
+[Iago Gois](https://github.com/dev-iago-gois)<br>
+[Leonardo Lindo](https://github.com/leocaridade)<br>
+[Lucca Mendes](https://github.com/TMendes-lucca)<br>
+[Olivia Couto](https://github.com/oliiviacouto)<br>
+
 [LINK DO APP](https://projeto-app-de-receitas-eta.vercel.app/)<br>
 Para teste:<br>
 e-mail: teste@teste.com<br>
