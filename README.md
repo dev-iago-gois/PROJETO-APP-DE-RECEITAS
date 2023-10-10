@@ -1,6 +1,9 @@
 # :construction: Todos os commits "Initial commit" foram feitos pela @Trybe :construction:
 
 [LINK DO APP](https://projeto-app-de-receitas-eta.vercel.app/)
+Para teste:
+e-mail: teste@teste.com
+senha: 123456Ab.
 
 <!-- Olá, Tryber!
 Esse é apenas um arquivo inicial para o README do seu projeto.
